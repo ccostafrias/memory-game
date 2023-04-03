@@ -1,0 +1,92 @@
+@charset "UTF-8";
+
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+/*Reset & root*/
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-white: #fff;
+    --color-body-bg-color: #e7ecef;
+    --color-text-color: #274c77;
+    --color-gray-dark: #6096ba;
+    --color-gray-light: #a3cef1;
+    --color-box-shadow: rgba(0, 0, 0, .1);
+
+    --font-main: 'Poppins', sans-serif;
+
+    --fs-xl: 3rem;
+    --fs-600: 1.8rem;
+    --fs-500: 1.2rem;
+    --fs-400: 1rem;
+}
+
+html {
+    font-size: 16px;
+}
+
+html,
+body {
+    min-height: 100vh;
+}
+
+body,
+input,
+textarea,
+button,
+a {
+    color: var(--color-text-color);
+    font-family: var(--font-main);
+}
+
+body {
+    background: var(--color-body-bg-color);
+    line-height: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+/* Header */
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Board */
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #ccc;
+}
+
+.card {
+    aspect-ratio: 1/1;
+    width: 75px;
+    position: relative;
+    background-color: var(--color-white);
+    border: 1px solid #000;
+    cursor: pointer;
+}
+
+.card.flip::after {
+    position: absolute;
+    content: attr(data-card-value);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: var(--fs-600);
+    font-weight: bold;
+}
