@@ -2,6 +2,7 @@ const tableSize = 4
 const numCards = tableSize**2
 const cards = setCards(numCards/2, 'a')
 
+// Cria uma array com números
 function setCards(size, key) {
     if (size % 2 == 1) alert('Tabela precisa ser par!')
 
@@ -36,70 +37,65 @@ function shuffle(array) {
 const shuffledCards = shuffle(cards.concat(setCards(numCards/2, 'b')));
 
 const board = document.getElementById("board");
-
-// shuffledCards.forEach(card => {
-//     const newCard = document.createElement("div");
-//     newCard.classList.add("card");
-//     newCard.dataset.cardValue = card['num'];
-//     newCard.addEventListener("click", flipCard);
-//     board.appendChild(newCard);
-// });
-
-board.innerHTML = shuffledCards.map(card => {
-    return `<div class='card' data-card-value='${card['num']}'></div>`
+board.innerHTML = shuffledCards.map((card, i) => {
+    return (
+        `<div class='card' data-index='${i}'>
+            <div class='turn card-front'></div>
+            <div class='turn card-back'><span></span></div>
+        </div>`
+    )
 }).join('')
 
 const boardCards = [...board.querySelectorAll('.card')]
 boardCards.forEach(boardCard => boardCard.addEventListener("click", flipCard))
 
-let flippedCards = [];
-let lockBoard = false;
+let flippedCards = []
+let lockBoard = false
 
 function flipCard() {
-    if (lockBoard) return;
-    if (this === flippedCards[0]) return;
+    if (lockBoard) return
+    if (this.classList.contains('locked') || this.classList.contains('flip')) return
 
-    this.classList.add("flip");
+    const [cardFront, cardBack] = [...this.children]
+    const index = this.dataset.index
+    const cardContent = shuffledCards[index]
 
-    if (flippedCards.length === 0) {
-        flippedCards[0] = this;
-        return;
-    } else {
-        board.classList.add("disabled");
-        flippedCards[1] = this;
-        checkForMatch();
+    this.classList.add("flip")
+    cardBack.querySelector('span').innerHTML = cardContent['num']
+
+    flippedCards.push(this)
+
+    if (flippedCards.length === 2) {
+        const [numA, numB] = flippedCards.map(card => shuffledCards[card.dataset.index]['num'])
+        if (numA === numB) {
+            flippedCards.forEach(card => {
+                card.classList.add('locked')
+            })
+
+            setScore(true)
+            flippedCards = []
+        } else {
+            lockBoard = true
+
+            flippedCards.forEach(card => {
+                card.classList.add('shake')
+            })
+            
+            setTimeout(() => {
+                flippedCards.forEach(card => {
+                    card.classList.remove('shake')
+                    card.classList.remove('flip')
+                })
+                
+                setTimeout(() => {
+                    cardBack.querySelector('span').innerHTML = ''
+                    lockBoard = false
+                    flippedCards = []
+                }, 400)
+            }, 500)
+
+        }
     }
-}
-
-function checkForMatch() {
-    let isMatch = flippedCards[0].dataset.cardValue === flippedCards[1].dataset.cardValue;
-
-    isMatch ? disableCards() : unflipCards();
-}
-
-function disableCards() {
-    score++
-    flippedCards[0].removeEventListener("click", flipCard);
-    flippedCards[1].removeEventListener("click", flipCard);
-    resetBoard();
-    addScore();
-}
-
-function unflipCards() {
-    lockBoard = true;
-
-    setTimeout(() => {
-        flippedCards[0].classList.remove("flip");
-        flippedCards[1].classList.remove("flip");
-
-        resetBoard();
-    }, 1500);
-}
-
-function resetBoard() {
-    flippedCards = [];
-    lockBoard = false;
-    board.classList.remove("disabled");
 }
 
 // Score
@@ -109,6 +105,7 @@ let score = 0
 
 setScore()
 
-function setScore() {
+function setScore(add = false) {
+    if (add) score++
     scoreTxt.textContent = `Placar: ${score}/${cards.length}`
 }

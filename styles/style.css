@@ -23,6 +23,9 @@
     --fs-600: 1.8rem;
     --fs-500: 1.2rem;
     --fs-400: 1rem;
+
+    --fw-normal: 400;
+    --fw-bold: 500;
 }
 
 html {
@@ -69,24 +72,58 @@ body {
     gap: 10px;
     padding: 10px;
     border-radius: 10px;
-    background-color: #ccc;
 }
 
 .card {
+    position: relative;
     aspect-ratio: 1/1;
     width: 75px;
-    position: relative;
-    background-color: var(--color-white);
-    border: 1px solid #000;
     cursor: pointer;
+    border-radius: 5px;
+    overflow: hidden;
+    /* box-shadow: 5px 5px 0 var(--color-text-color); */
 }
 
-.card.flip::after {
+.turn {
     position: absolute;
-    content: attr(data-card-value);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-white);
+    backface-visibility: hidden;
+    transition: transform .5s ease;
+}
+
+.card .turn.card-front { transform: rotateY(0deg); }
+.card .turn.card-back { transform: rotateY(-180deg); }
+
+.card.flip .turn.card-front { transform: rotateY(180deg); }
+.card.flip .turn.card-back { transform: rotateY(0deg); }
+
+.card-back {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: var(--fs-600);
-    font-weight: bold;
+    font-weight: var(--fw-bold);
+}
+
+.card.shake {
+    /* Start the shake animation and make the animation last for 0.5 seconds */
+    animation: shake .5s;
+}
+  
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
