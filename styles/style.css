@@ -16,7 +16,7 @@
     --color-gray-dark: #6096ba;
     --color-gray-light: #a3cef1;
     --color-card-especial: #ffa500;
-    --color-box-shadow: rgba(0, 0, 0, .1);
+    --color-box-shadow: rgba(0, 0, 0, .5);
 
     --font-main: 'Poppins', sans-serif;
 
@@ -24,6 +24,7 @@
     --fs-600: 1.8rem;
     --fs-500: 1.2rem;
     --fs-400: 1rem;
+    --fs-200: .8rem
 
     --fw-normal: 400;
     --fw-bold: 700;
@@ -171,6 +172,10 @@ body {
     z-index: 99;
 }
 
+.configs:has(.winner-screen) {
+    background-color: var(--color-box-shadow);
+}
+
 .configs.invisible {
     opacity: 0;
     pointer-events: none;
@@ -184,22 +189,37 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background-color: var(--color-body-bg-color);
-    border-radius: 10px;
     transform: scale(1);
     transition: transform .2s ease-out;
 }
 
 .configs-close-bttn {
+    aspect-ratio: 1/1;
     display: none;
+    width: 30px;
+    background-color: var(--color-body-bg-color);
+    -webkit-mask-image: url('../images/close-outline.svg');
     align-self: flex-end;
 }
 
-.configs-content {
+.configs-close-bttn.visible {
+    display: block;
+}
+
+.configs-content,
+.winner-screen {
     display: flex;
     flex-direction: column;
-    padding: 1em;
-    gap: 30px;
+    padding: 2em;
+    gap: 40px;
+    border-radius: 10px;
+    background-color: var(--color-white);
+}
+
+.configs-wrapper,
+.winner-screen {
+    width: 80%;
+    max-width: 400px;
 }
 
 .config-label {
@@ -238,7 +258,7 @@ body {
     mask-image: url('../images/caret-back-outline.svg');
 }
 
-.arrow.left.block { 
+.arrow.block { 
     opacity: .5;
     cursor: not-allowed;
 }
@@ -253,46 +273,135 @@ body {
 
 .player {
     aspect-ratio: 1/1;
-    width: 3rem;
+    width: 4rem;
     border-radius: 50%;
     font-size: var(--fs-500);
-    background-color: var(--color-gray-light);
+    background-color: var(--color-body-bg-color);
+
+    transition: background .2s ease,
+                color .2s ease;
 }
 
-.player.active,
-.bttn.active {
-    opacity: .40;
+.theme-bttn.active {
+    background-color: var(--color-card-especial);
+    color: var(--color-white);
+}
+
+.player.active {
+    background-color: var(--color-card-especial);
+    color: var(--color-white);
 }
 
 .bttn {
     background-color: var(--color-text-color);
     padding: .4em;
+    border-radius: 50px;
     font-size: var(--fs-500);
     font-weight: var(--fw-bold);
     color: var(--color-body-bg-color);
-    border-radius: 5px;
-    transition: opacity .2s ease;
+    transition: opacity .2s ease,
+                background .2s ease,
+                color .2s ease;
 }
 
 .bttn:not(.active):hover {
     opacity: .75;
 }
 
+
+.theme-bttn {
+    background-color: var(--color-body-bg-color);
+    color: var(--color-text-color);
+}
+
+/* Winner screen */
+
+.winner-screen header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.winner-screen header h2 {
+    font-size: var(--fs-600);
+}
+
+.winner-screen header span {
+    font-size: var(--fs-200);
+    opacity: .5;
+}
+
+.winner-players {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.winner-player {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em;
+    border-radius: 5px;
+    background-color: var(--color-body-bg-color);
+}
+
+.winner-player-name {
+    opacity: .75;
+}
+
+.winner-pairs {
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-500);
+}
+
+.player-winner {
+    background-color: var(--color-text-color);
+    color: var(--color-white);
+}
+
+.winner-bttns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.winner-bttn {
+    font-size: var(--fs-200);
+    border-radius: 50px;
+}
+
+.winner-restart-bttn {
+    background-color: var(--color-card-especial);
+    color: var(--color-white);
+}
+
+.winner-ng-bttn {
+    background-color: var(--color-body-bg-color);
+    color: var(--color-text-color);
+}
+
 /* Score */
 
 .score-container {
-    min-width: 120%;
+    max-width: 700px;
+    width: 80vw;
 }
 
 .score-wrapper {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
+
+    gap: 20px;
 }
 
 .score-player {
     display: flex;
     justify-content: space-between;
+    font-size: clamp(10px, 2.5vw, 16px);
     gap: 20px;
     padding: .8em 1em;
     background-color: var(--color-white);
@@ -310,7 +419,7 @@ body {
     display: block;
     content: '';
     position: absolute;
-    width: 30px;
+    width: clamp(20px, 2.5vw, 30px);
     background-color: var(--color-card-especial);
     top: -5px;
     left: 50%;

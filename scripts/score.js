@@ -5,6 +5,7 @@ function setScore() {
         playersOrder = Array.from({length: numberPlayers})
             .map((item, i) => {
                 return Object({
+                    player: i+1,
                     turn: i === 0 ? true : false,
                     score: 0
                 })
@@ -32,7 +33,7 @@ function updateScore(p) {
             ${playersOrder.map((player, i) => {
                 return (
                     `<div class="score-player ${player['turn'] ? 'turn' : ''}">
-                        <span class="score-player-name">Player ${i+1}</span>
+                        <span class="score-player-name">Player&nbsp;${i+1}</span>
                         <span class="score-player-score">${player['score']}</span>
                     </div>`
                 )
@@ -46,6 +47,7 @@ function updateScore(p) {
 
         setTimeout(() => {
             stopConfetti()
+            setConfigs('win-many')
         }, 1000);
     }
 }

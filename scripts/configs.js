@@ -11,18 +11,22 @@ function handleArrowClick(e) {
     const tablesizeArrows = [...document.querySelectorAll('.arrow')]
     const tableSizeInput = document.querySelector('.table-size-num')
 
+    const [min, max] = [2, 8]
     tableSize = side === 'left' ? tableSize - 2 : tableSize + 2
-    if (tableSize <= 2) { 
-        tableSize = 2
+    if (tableSize <= min) { 
+        tableSize = min
         tablesizeArrows.find(arrow => arrow.classList.contains('left')).classList.add('block')
-    } else {
+    } else if (tableSize >= max) {
+        tableSize = max
+        tablesizeArrows.find(arrow => arrow.classList.contains('right')).classList.add('block')
+    }else {
         tablesizeArrows.find(arrow => arrow.classList.contains('left')).classList.remove('block')
     }
     
     tableSizeInput.innerHTML = `${tableSize}x${tableSize}`
 }
 
-function handleStartClick() {
+function handleStartClick(e) {
     const configs = document.querySelector('.configs')
     configs.classList.add('invisible')
     startGame()
@@ -35,36 +39,43 @@ function handleThemeClick(e) {
     theme = this.textContent.toLowerCase()
 }
 
+function handleNewGameClick(e) {
+    setConfigs('settings')
+}
+
 const configContainer = document.querySelector(".configs")
 
-function setConfigs(p) {
+function setConfigs(p, showClose = false) {
+    const configs = document.querySelector('.configs')
+    configs.classList.remove('invisible')
+
     if (p === 'settings') {
         configContainer.innerHTML = (
             `<div class="configs-wrapper">
-            <button class="configs-close-bttn"></button>
+            <button class="configs-close-bttn ${showClose ? 'visible' : ''}"></button>
             <div class="configs-content">
                 <div class="configs-fieldset">
                     <span class="config-label">Memory theme</span>
                     <div class="theme-field">
-                        <button class="theme-bttn bttn active">Numbers</button>
-                        <button class="theme-bttn bttn">Icons</button>
+                        <button class="theme-bttn bttn ${theme === 'numbers' ? 'active' : ''}">Numbers</button>
+                        <button class="theme-bttn bttn ${theme === 'icons' ? 'active' : ''}">Icons</button>
                     </div>
                 </div>
                 <div class="configs-fieldset">
                     <span class="config-label">Table size:</span>
                     <div class="table-size-field">
                         <button class="arrow left"></button>
-                        <div class="table-size-num">4x4</div>
+                        <div class="table-size-num">${tableSize}x${tableSize}</div>
                         <button class="arrow right"></button>
                     </div>
                 </div>
                 <div class="configs-fieldset">
                     <span class="config-label">Number of players:</span>
                     <div class="num-players-field">
-                        <button class="player">1</button>
-                        <button class="player active">2</button>
-                        <button class="player">3</button>
-                        <button class="player">4</button>
+                        <button class="player ${numberPlayers === 1 ? 'active' : ''}">1</button>
+                        <button class="player ${numberPlayers === 2 ? 'active' : ''}">2</button>
+                        <button class="player ${numberPlayers === 3 ? 'active' : ''}">3</button>
+                        <button class="player ${numberPlayers === 4 ? 'active' : ''}">4</button>
                     </div>
                 </div>
                 <button class="start-bttn bttn">Start Game</button>
@@ -89,6 +100,42 @@ function setConfigs(p) {
         players.forEach(player => {
             player.addEventListener('click', handlePlayerClick)
         })
+
+    } else if (p === 'win-many') {
+        const playersSorted = playersOrder.sort((playerA, playerB) => {
+            return playerB['score'] - playerA['score']
+        })
+
+        configContainer.innerHTML = (
+            `<div class="winner-screen">
+                <header>
+                    <h2>Player ${playersSorted[0]['player']} wins!</h2>
+                    <span>Game over... Here are the results!</span>
+                </header>
+
+                <div class="winner-players">
+                    ${playersSorted.map((player, i) => {
+                        return (
+                            `<div class="winner-player ${i === 0 ? 'player-winner' : ''}">
+                                <span class="winner-player-name">Player ${player['player']}${i === 0 ? ' (Winner!)' : ''}</span>
+                                <span class="winner-pairs">${player['score']} pairs</span>
+                            </div>`
+                        )
+                    }).join('')}
+                </div>
+
+                <div class="winner-bttns">
+                    <button class="winner-bttn bttn winner-restart-bttn">Restart</button>
+                    <button class="winner-bttn bttn winner-ng-bttn">Setup New Game</button>
+                </div>
+            </div>`
+        )
+
+        const restartBttn = document.querySelector('.winner-restart-bttn')
+        restartBttn.addEventListener('click', handleStartClick)
+
+        const setupNewGameBttn = document.querySelector('.winner-ng-bttn')
+        setupNewGameBttn.addEventListener('click', handleNewGameClick)
     }
 }
 
