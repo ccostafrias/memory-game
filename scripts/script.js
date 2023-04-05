@@ -1,16 +1,65 @@
-const tableSize = 4
-const numCards = tableSize**2
-const cards = setCards(numCards/2, 'a')
+let tableSize = 4
+let numberPlayers = 2
+let playersOrder = []
+let theme = 'numbers'
+let cards = setCards(tableSize, 'a').concat(setCards(tableSize, 'b'))
 
-// Cria uma array com números
+const board = document.getElementById("board")
+
+// Initialize the game
+function startGame() {
+    flippedCards = []
+    lockBoard = false
+    score = 0
+    cards = setCards(tableSize, 'a').concat(setCards(tableSize, 'b'))
+    shuffledCards = shuffle(cards)
+
+    document.documentElement.style.setProperty('--table-size', tableSize)
+
+    const cardSize = () => {
+        const i = (tableSize - 2) / 2
+        const size = Math.round(100 * ((.75)**(i)))
+        return `${size}px`
+    }
+    document.documentElement.style.setProperty('--card-size', cardSize())
+
+    board.innerHTML = shuffledCards.map((card, i) => {
+        return (
+            `<div class='card' data-index='${i}'>
+                <div class='turn card-front'></div>
+                <div class='turn card-back'><span></span></div>
+            </div>`
+        )
+    }).join('')
+
+    const boardCards = [...board.querySelectorAll('.card')]
+    boardCards.forEach(boardCard => boardCard.addEventListener("click", flipCard))
+
+    setScore()
+}
+
+// Create array within a range of numbers
 function setCards(size, key) {
-    if (size % 2 == 1) alert('Tabela precisa ser par!')
+    if (size <= 0) {
+        size = tableSize = 2
+    }
+
+    if (size % 2 !== 0) {
+        tableSize++
+        size = (size+1)**2/2
+    } else {
+        size = size**2/2
+    }
 
     const newCards = Array.from({length: size}).map((n, i) => Object({num: i+1, key}))
     return newCards
 }
 
-// Embaralha as cartas
+// Shuffle the cards
+// The top cards go into any position, randomly
+// Sometime, the top card will go under the first bottom card
+// This card will slowly rise through the deck
+// When that card reaches the top, the deck is 100% shuffled
 function shuffle(array) {
     const length = array.length
     const bottomNum = array[0]['num']
@@ -31,23 +80,8 @@ function shuffle(array) {
     let top = array.pop()
     array.splice(random, 0, top)
 
-    return array;
+    return array
 }
-
-const shuffledCards = shuffle(cards.concat(setCards(numCards/2, 'b')));
-
-const board = document.getElementById("board");
-board.innerHTML = shuffledCards.map((card, i) => {
-    return (
-        `<div class='card' data-index='${i}'>
-            <div class='turn card-front'></div>
-            <div class='turn card-back'><span></span></div>
-        </div>`
-    )
-}).join('')
-
-const boardCards = [...board.querySelectorAll('.card')]
-boardCards.forEach(boardCard => boardCard.addEventListener("click", flipCard))
 
 let flippedCards = []
 let lockBoard = false
@@ -65,6 +99,10 @@ function flipCard() {
 
     flippedCards.push(this)
 
+    checkMatch(this)
+}
+
+function checkMatch() {
     if (flippedCards.length === 2) {
         const [numA, numB] = flippedCards.map(card => shuffledCards[card.dataset.index]['num'])
         if (numA === numB) {
@@ -72,7 +110,7 @@ function flipCard() {
                 card.classList.add('locked')
             })
 
-            setScore(true)
+            updateScore('add')
             flippedCards = []
         } else {
             lockBoard = true
@@ -86,26 +124,21 @@ function flipCard() {
                     card.classList.remove('shake')
                     card.classList.remove('flip')
                 })
+
+                updateScore('pass')
                 
                 setTimeout(() => {
-                    cardBack.querySelector('span').innerHTML = ''
+                    flippedCards.forEach(card => {
+                        card.querySelector('span').innerHTML = ''
+                    })
+                    
                     lockBoard = false
                     flippedCards = []
-                }, 400)
+                }, 300)
             }, 500)
 
         }
     }
 }
 
-// Score
-
-const scoreTxt = document.getElementById("score");
-let score = 0
-
-setScore()
-
-function setScore(add = false) {
-    if (add) score++
-    scoreTxt.textContent = `Placar: ${score}/${cards.length}`
-}
+// startGame()

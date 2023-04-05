@@ -1,22 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="./styles/style.css">
-	<title>Jogo da Memória</title>
+	<title>Memory game</title>
 </head>
 
 <body>
 	<header class="header">
-		<h1>Jogo da Memória</h1>
-		<h2 id="score">Placar: </h2>
+		<h1>Memory game</h1>
 	</header>
-	<main id="board">
+	<main class="main">
+		<div class="configs">
+
+		</div>
+		<div id="board"></div>
 		<!-- Aqui serão adicionados os cartões dinamicamente através do JavaScript -->
+		<div class="score-container">
+		</div>
 	</main>
 
-	<script src="scripts/script.js"></script>
+	<script src="./scripts/script.js"></script>
+	<script src="./scripts/configs.js"></script>
+	<script src="./scripts/confetti.js"></script>
+	<script src="./scripts/score.js"></script>
 
 </html>
