@@ -4,14 +4,17 @@ function handlePlayerClick(e) {
 
     this.classList.add('active')
     numberPlayers = Number(this.textContent)
+
+    saveLocalStorage('numberPlayers', numberPlayers)
 }
+
+const [min, max] = [2, 6]
 
 function handleArrowClick(e) {
     const side = [...this.classList].find(classy => classy === 'left' || classy === 'right')
     const tablesizeArrows = [...document.querySelectorAll('.arrow')]
     const tableSizeInput = document.querySelector('.table-size-num')
 
-    const [min, max] = [2, 8]
     tableSize = side === 'left' ? tableSize - 2 : tableSize + 2
     if (tableSize <= min) { 
         tableSize = min
@@ -21,8 +24,10 @@ function handleArrowClick(e) {
         tablesizeArrows.find(arrow => arrow.classList.contains('right')).classList.add('block')
     }else {
         tablesizeArrows.find(arrow => arrow.classList.contains('left')).classList.remove('block')
+        tablesizeArrows.find(arrow => arrow.classList.contains('right')).classList.remove('block')
     }
     
+    saveLocalStorage('tableSize', tableSize)
     tableSizeInput.innerHTML = `${tableSize}x${tableSize}`
 }
 
@@ -37,6 +42,8 @@ function handleThemeClick(e) {
     themeBttns.forEach(bttn => bttn.classList.remove('active'))
     this.classList.add('active')
     theme = this.textContent.toLowerCase()
+
+    saveLocalStorage('theme', theme)
 }
 
 function handleNewGameClick(e) {
@@ -64,9 +71,9 @@ function setConfigs(p, showClose = false) {
                 <div class="configs-fieldset">
                     <span class="config-label">Table size:</span>
                     <div class="table-size-field">
-                        <button class="arrow left"></button>
+                        <button class="arrow left ${tableSize <= min ? 'block' : ''}"></button>
                         <div class="table-size-num">${tableSize}x${tableSize}</div>
-                        <button class="arrow right"></button>
+                        <button class="arrow right ${tableSize >= max ? 'block' : ''}"></button>
                     </div>
                 </div>
                 <div class="configs-fieldset">
@@ -136,7 +143,19 @@ function setConfigs(p, showClose = false) {
 
         const setupNewGameBttn = document.querySelector('.winner-ng-bttn')
         setupNewGameBttn.addEventListener('click', handleNewGameClick)
+    } else if (p === 'win-solo') {
+        
     }
 }
+
+const headerRestartButton = document.querySelector('.header-restart-bttn')
+headerRestartButton.addEventListener('click', () => {
+    if (!lockBoard) handleStartClick()
+})
+
+const headerNewGameButton = document.querySelector('.header-ng-bttn')
+headerNewGameButton.addEventListener('click', () => {
+    if (!lockBoard) handleNewGameClick()
+})
 
 setConfigs('settings')

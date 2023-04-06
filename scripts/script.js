@@ -1,33 +1,113 @@
-let tableSize = 4
-let numberPlayers = 2
+const prefix = 'memorygame'
+
+let tableSize = getLocalStorage('tableSize') || 4
+let numberPlayers = getLocalStorage('numberPlayers') || 2
+let theme = getLocalStorage('theme') || 'numbers'
 let playersOrder = []
-let theme = 'numbers'
+
+const icons = [
+    "<img src='../images/cards/accessibility-outline.svg'/>",
+    "<img src='../images/cards/airplane-outline.svg'/>",
+    "<img src='../images/cards/alarm-outline.svg'/>",
+    "<img src='../images/cards/american-football-outline.svg'/>",
+    "<img src='../images/cards/attach-outline.svg'/>",
+    "<img src='../images/cards/balloon-outline.svg'/>",
+    "<img src='../images/cards/bandage-outline.svg'/>",
+    "<img src='../images/cards/barbell-outline.svg'/>",
+    "<img src='../images/cards/bed-outline.svg'/>",
+    "<img src='../images/cards/beer-outline.svg'/>",
+    "<img src='../images/cards/bicycle-outline.svg'/>",
+    "<img src='../images/cards/boat-outline.svg'/>",
+    "<img src='../images/cards/bonfire-outline.svg'/>",
+    "<img src='../images/cards/book-outline.svg'/>",
+    "<img src='../images/cards/bowling-ball-outline.svg'/>",
+    "<img src='../images/cards/bug-outline.svg'/>",
+    "<img src='../images/cards/camera-outline.svg'/>",
+    "<img src='../images/cards/car-outline.svg'/>",
+    "<img src='../images/cards/color-palette-outline.svg'/>",
+    "<img src='../images/cards/cut-outline.svg'/>",
+    "<img src='../images/cards/diamond-outline.svg'/>",
+    "<img src='../images/cards/dice-outline.svg'/>",
+    "<img src='../images/cards/earth-outline.svg'/>",
+    "<img src='../images/cards/extension-puzzle-outline.svg'/>",
+    "<img src='../images/cards/fish-outline.svg'/>",
+    "<img src='../images/cards/flask-outline.svg'/>",
+    "<img src='../images/cards/footsteps-outline.svg'/>",
+    "<img src='../images/cards/game-controller-outline.svg'/>",
+    "<img src='../images/cards/happy-outline.svg'/>",
+    "<img src='../images/cards/home-outline.svg'/>",
+    "<img src='../images/cards/hourglass-outline.svg'/>",
+    "<img src='../images/cards/paw-outline.svg'/>",
+]
+
+const selectRandom = (arr, size) => {
+    let arrCopy = Array.from(arr)
+    return Array
+        .from({length: size})
+        .map((n, i) => {
+            let random = Math.floor(Math.random() * arrCopy.length)
+            let arrRandom = (arrCopy.splice(random, 1)).join('')
+
+            return arrRandom
+        })
+}
+let selectedIcons = selectRandom(icons, tableSize**2/2)
+
 let cards = setCards(tableSize, 'a').concat(setCards(tableSize, 'b'))
 
 const board = document.getElementById("board")
 
-// Initialize the game
+function getLocalStorage(key) {
+    const fromlocal = localStorage.getItem(`${prefix}-${key}`)
+    if (fromlocal) {
+        if (Number(fromlocal)) {
+            return Number(fromlocal)
+        }
+        else { 
+            return fromlocal
+        }
+    }
+}
+
+function saveLocalStorage(key, value) {
+    localStorage.setItem(`${prefix}-${key}`, value)
+}
+
+// Start the game
 function startGame() {
+    // Reset configs
+    selectedIcons = selectRandom(icons, tableSize**2/2)
     flippedCards = []
     lockBoard = false
     score = 0
+
     cards = setCards(tableSize, 'a').concat(setCards(tableSize, 'b'))
     shuffledCards = shuffle(cards)
+    let insideCard
+
+    if (theme === 'numbers') {
+        insideCard = `<span class="card-content"></span>`
+    } else if (theme === 'icons') {
+        insideCard = `<div class="card-content"></div>`
+    }
 
     document.documentElement.style.setProperty('--table-size', tableSize)
 
+    // Card size CSS variable
     const cardSize = () => {
         const i = (tableSize - 2) / 2
         const size = Math.round(100 * ((.75)**(i)))
         return `${size}px`
     }
+
     document.documentElement.style.setProperty('--card-size', cardSize())
+    document.documentElement.style.setProperty('--num-players', numberPlayers)
 
     board.innerHTML = shuffledCards.map((card, i) => {
         return (
             `<div class='card' data-index='${i}'>
                 <div class='turn card-front'></div>
-                <div class='turn card-back'><span></span></div>
+                <div class='turn card-back'>${insideCard}</div>
             </div>`
         )
     }).join('')
@@ -51,7 +131,17 @@ function setCards(size, key) {
         size = size**2/2
     }
 
-    const newCards = Array.from({length: size}).map((n, i) => Object({num: i+1, key}))
+    let newCards
+
+    if (theme === 'numbers') { 
+        newCards = Array
+            .from({length: size})
+            .map((n, i) => Object({num: i+1, key}))
+    } else if (theme === 'icons') {
+        newCards = Array
+            .from({length: size})
+            .map((n, i) => Object({num: selectedIcons[i], key}))
+    }
     return newCards
 }
 
@@ -95,7 +185,7 @@ function flipCard() {
     const cardContent = shuffledCards[index]
 
     this.classList.add("flip")
-    cardBack.querySelector('span').innerHTML = cardContent['num']
+    cardBack.querySelector('.card-content').innerHTML = cardContent['num']
 
     flippedCards.push(this)
 
@@ -129,7 +219,7 @@ function checkMatch() {
                 
                 setTimeout(() => {
                     flippedCards.forEach(card => {
-                        card.querySelector('span').innerHTML = ''
+                        card.querySelector('.card-content').innerHTML = ''
                     })
                     
                     lockBoard = false
@@ -140,5 +230,3 @@ function checkMatch() {
         }
     }
 }
-
-// startGame()

@@ -11,7 +11,7 @@
 
 :root {
     --color-white: #fff;
-    --color-body-bg-color: #e7ecef;
+    --color-body-bg-color: #d1dadf;
     --color-text-color: #274c77;
     --color-gray-dark: #6096ba;
     --color-gray-light: #a3cef1;
@@ -36,7 +36,7 @@ html {
 
 html,
 body {
-    min-height: 100vh;
+    min-height: 100svh;
 }
 
 body,
@@ -56,7 +56,7 @@ button, input {
 }
 
 body {
-    background: var(--color-body-bg-color);
+    background: var(--color-white);
     line-height: 1;
     display: flex;
     flex-direction: column;
@@ -69,8 +69,16 @@ body {
 
 .header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    max-width: 600px;
+    width: 90vw;
+}
+
+.header-buttons-wrapper {
+    display: flex;
+    gap: 15px;
 }
 
 /* Board */
@@ -83,20 +91,37 @@ body {
 }
 
 #board {
+    box-sizing: content-box;
     display: grid;
     grid-template-columns: repeat(var(--table-size), 1fr);
+    width: 90vw;
+    max-width: calc(var(--table-size) * var(--card-size) + ((var(--table-size) - 1) * 10px));
     gap: 10px;
     padding: 10px;
     border-radius: 10px;
 }
 
+.card-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.card-content > img {
+    transform: scale(.55);
+    filter: invert();
+}
+
 .card {
     position: relative;
     aspect-ratio: 1/1;
-    width: var(--card-size);
+    max-width: var(--card-size);
     border-radius: 5px;
     cursor: pointer;
     overflow: hidden;
+    color: var(--color-white);
 }
 
 .card .turn {
@@ -105,7 +130,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--color-white);
+    background-color: var(--color-body-bg-color);
     backface-visibility: hidden;
     transition: transform .5s ease,
                 background-color .2s ease,
@@ -118,7 +143,7 @@ body {
 .card.flip .turn.card-front { transform: rotateY(180deg); }
 .card.flip .turn.card-back { transform: rotateY(0deg); }
 
-.card-front {
+.card .card-front {
     background-color: var(--color-text-color);
 }
 
@@ -133,7 +158,6 @@ body {
 
 .card.locked .card-back {
     background-color: var(--color-card-especial);
-    color: var(--color-white);
 }
 
 .card.shake {
@@ -368,17 +392,19 @@ body {
     gap: 10px;
 }
 
-.winner-bttn {
+.winner-bttn,
+.header-bttn {
     font-size: var(--fs-200);
-    border-radius: 50px;
 }
 
-.winner-restart-bttn {
+.winner-restart-bttn,
+.header-restart-bttn {
     background-color: var(--color-card-especial);
     color: var(--color-white);
 }
 
-.winner-ng-bttn {
+.winner-ng-bttn,
+.header-ng-bttn {
     background-color: var(--color-body-bg-color);
     color: var(--color-text-color);
 }
@@ -386,14 +412,13 @@ body {
 /* Score */
 
 .score-container {
-    max-width: 700px;
-    width: 80vw;
+    max-width: 600px;
+    width: 90vw;
 }
 
 .score-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: repeat(var(--num-players), 1fr);
 
     gap: 20px;
 }
@@ -401,10 +426,10 @@ body {
 .score-player {
     display: flex;
     justify-content: space-between;
-    font-size: clamp(10px, 2.5vw, 16px);
+    font-size: clamp(12px, 2.5vw, 16px);
     gap: 20px;
     padding: .8em 1em;
-    background-color: var(--color-white);
+    background-color: var(--color-body-bg-color);
     border-radius: 5px;
 }
 
@@ -432,8 +457,43 @@ body {
     font-weight: var(--fw-bold);
 }
 
+.name-short {
+    display: none;
+}
+
 /* Confetti */
 
 #confetti-canvas {
     position: absolute;
+}
+
+@media (max-width: 1000px) {
+    .score-player {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 500px) {
+    .score-player {
+        font-size: var(--fs-500);
+        align-items: center;
+        gap: 15px;
+    }
+
+    .score-player-name {
+        display: none;
+    }
+
+    .name-short {
+        display: inline-block;
+    }
+
+    .winner-bttns {
+        grid-template-columns: none;
+        grid-template-rows: 1fr 1fr;
+    }
+
+    .header-restart-bttn {
+        display: none;
+    }
 }

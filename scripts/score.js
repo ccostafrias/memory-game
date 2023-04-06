@@ -1,6 +1,7 @@
 const scoreContainer = document.querySelector(".score-container")
 
 function setScore() {
+    // Score for 2+ players
     if (numberPlayers !== 1) {
         playersOrder = Array.from({length: numberPlayers})
             .map((item, i) => {
@@ -12,6 +13,10 @@ function setScore() {
             })
 
         updateScore()
+    } 
+    // Score for solo player
+    else {
+
     }
 }
 
@@ -33,6 +38,7 @@ function updateScore(p) {
             ${playersOrder.map((player, i) => {
                 return (
                     `<div class="score-player ${player['turn'] ? 'turn' : ''}">
+                        <span class="score-player-name name-short">P${i+1}</span>
                         <span class="score-player-name">Player&nbsp;${i+1}</span>
                         <span class="score-player-score">${player['score']}</span>
                     </div>`
