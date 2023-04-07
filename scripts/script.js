@@ -76,6 +76,8 @@ function saveLocalStorage(key, value) {
 // Start the game
 function startGame() {
     // Reset configs
+    if (timer) clearInterval(timer)
+    
     selectedIcons = selectRandom(icons, tableSize**2/2)
     flippedCards = []
     lockBoard = false
@@ -200,7 +202,8 @@ function checkMatch() {
                 card.classList.add('locked')
             })
 
-            updateScore('add')
+            if (numberPlayers !== 1)  updateScore('add')
+            else updateScoreSolo('add')
             flippedCards = []
         } else {
             lockBoard = true
@@ -215,7 +218,8 @@ function checkMatch() {
                     card.classList.remove('flip')
                 })
 
-                updateScore('pass')
+                if (numberPlayers !== 1)  updateScore('pass')
+                else updateScoreSolo('move')
                 
                 setTimeout(() => {
                     flippedCards.forEach(card => {

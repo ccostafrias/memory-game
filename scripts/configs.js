@@ -144,7 +144,38 @@ function setConfigs(p, showClose = false) {
         const setupNewGameBttn = document.querySelector('.winner-ng-bttn')
         setupNewGameBttn.addEventListener('click', handleNewGameClick)
     } else if (p === 'win-solo') {
-        
+        if (timer) clearInterval(timer)
+
+        configContainer.innerHTML = (
+            `<div class="winner-screen">
+                <header>
+                    <h2>You did it!</h2>
+                    <span>Game over... Here's how you got on...</span>
+                </header>
+
+                <div class="winner-content">
+                    <div class="winner-time-container">
+                        <span class="winner-time">Time Elapsed</span>
+                        <span class="winner-time-count">${buildTime(playersOrder['time'])}</span>
+                    </div>
+                    <div class="winner-moves-container">
+                        <span class="winner-moves">Moves Taken</span>
+                        <span class="winner-moves-count">${playersOrder['moves']}</span>
+                    </div>
+                </div>
+
+                <div class="winner-bttns">
+                    <button class="winner-bttn bttn winner-restart-bttn">Restart</button>
+                    <button class="winner-bttn bttn winner-ng-bttn">Setup New Game</button>
+                </div>
+            </div>`
+        )
+
+        const restartBttn = document.querySelector('.winner-restart-bttn')
+        restartBttn.addEventListener('click', handleStartClick)
+
+        const setupNewGameBttn = document.querySelector('.winner-ng-bttn')
+        setupNewGameBttn.addEventListener('click', handleNewGameClick)
     }
 }
 
